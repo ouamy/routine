@@ -18,18 +18,22 @@ body {
     transition: background-color 0.3s ease;
 }
 
-h1 {
-    text-align: center;
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 20px;
+}
+
+h1 {
+    margin: 0;
     color: #000;
-    position: relative;
+    text-align: center;
+    flex-grow: 1;
 }
 
 .toggle-dark-mode {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 10px;
+    margin-left: 10px;
 }
 
 .schedule-item {
