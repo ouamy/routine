@@ -22,7 +22,7 @@ async function getPrayerTimes(location) {
             { time: "12:00", task: "Eat salad" },
             { time: "12:30", task: "Gaming or Studying" },
             { time: "18:00", task: "Dinner" },
-            { time: "18:30", task: "Read, Watch YouTube or Watch Show/Movie" },
+            { time: "18:30", task: "Read, Create an Application or Watch YouTube" },
             { time: "20:30", task: "Brush teeth" },
             { time: "21:00", task: "Sleep" }
         ];
@@ -50,7 +50,7 @@ async function displaySchedule(location) {
     let scheduleHTML = "";
     schedule.forEach(item => {
         const [hour, minute] = item.time.split(":");
-        const hour12 = ((hour % 12) || 12).toString().padStart(2, "0"); // Convert midnight (00:00) to 12 AM
+        const hour12 = ((hour % 12) || 12).toString().padStart(2, "0");
         const minutePadded = minute.padStart(2, "0");
         const ampm = hour < 12 ? "AM" : "PM";
         const time12 = `${hour12}:${minutePadded} ${ampm}`;
