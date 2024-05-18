@@ -1,18 +1,31 @@
 async function getPrayerTimes(location) {
   try {
-    const response = await fetch(
-      `http://localhost:8000/api/v1/el-fath-bruxelles/prayer-times`
+    const response = await fetch(`http://localhost:8000/api/prayer-times`);
+    const text = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, 'text/html');
+
+    const script = Array.from(doc.scripts).find(script =>
+      script.textContent.includes('var confData =')
     );
-    const data = await response.json();
-    const todayPrayerTimes = data;
+
+    if (!script) {
+      throw new Error('Script containing prayer times not found');
+    }
+
+    const confDataMatch = script.textContent.match(/var confData = (.*?);/);
+    if (!confDataMatch) {
+      throw new Error('Could not extract prayer times data');
+    }
+
+    const confData = JSON.parse(confDataMatch[1]);
+    const todayPrayerTimes = confData.times;
     const schedule = [];
 
-    for (const prayer in todayPrayerTimes) {
-      if (["fajr", "dohr", "asr", "maghreb", "icha"].includes(prayer)) {
-        const time = todayPrayerTimes[prayer].split(" ")[0];
-        schedule.push({ time, prayer });
-      }
-    }
+    ['fajr', 'dohr', 'asr', 'maghreb', 'icha'].forEach((prayer, index) => {
+      const time = todayPrayerTimes[index];
+      schedule.push({ time, prayer });
+    });
 
     const additionalTasks = [
       { time: "06:30", task: "Wake up and Brush teeth" },
@@ -45,8 +58,7 @@ async function displaySchedule(location) {
   const schedule = await getPrayerTimes(location);
 
   if (schedule.length === 0) {
-    scheduleContainer.innerHTML =
-      "<p>Failed to fetch schedule. Please try again later.</p>";
+    scheduleContainer.innerHTML = "<p>Failed to fetch schedule. Please try again later.</p>";
     return;
   }
 
@@ -61,9 +73,7 @@ async function displaySchedule(location) {
     const time12 = `${hour12}:${minutePadded} ${ampm}`;
 
     let taskName = item.prayer
-      ? `Meditate/Pray ${
-          item.prayer.charAt(0).toUpperCase() + item.prayer.slice(1)
-        }`
+      ? `Meditate/Pray ${item.prayer.charAt(0).toUpperCase() + item.prayer.slice(1)}`
       : item.task;
 
     if (time12 === previousTime) {
@@ -92,8 +102,7 @@ function toggleDarkMode() {
   container.classList.toggle("dark-mode");
   document.body.classList.toggle("dark-mode");
   const toggleButton = document.querySelector(".toggle-dark-mode button");
-  toggleButton.innerHTML = container.classList.contains("dark-mode")
-    ? "☀️"
-    : "🌙";
+  toggleButton.innerHTML = container.classList.contains("dark-mode") ? "☀️" : "🌙";
 }
+
 displaySchedule("Brussels");
