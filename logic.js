@@ -1,6 +1,6 @@
 async function getPrayerTimes(location) {
   try {
-    const response = await fetch(`http://141.253.111.131:8000/api/prayer-times`);
+    const response = await fetch(`https://routineforprayers.duckdns.org/api/prayer-times`);
     const text = await response.text();
     const parser = new DOMParser();
     const doc = parser.parseFromString(text, 'text/html');
