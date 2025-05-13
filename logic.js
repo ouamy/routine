@@ -1,6 +1,7 @@
 async function getPrayerTimes(location) {
   try {
-    const response = await fetch(`http://localhost:8000/api/prayer-times`);
+    // Utilisation de l'URL publique de l'API déployée
+    const response = await fetch(`http://141.253.111.131:8000/api/prayer-times`);
     const text = await response.text();
     const parser = new DOMParser();
     const doc = parser.parseFromString(text, 'text/html');
